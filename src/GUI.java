@@ -39,9 +39,9 @@ public class GUI {
 
 	public static void main(String[] args) {
 		showGUI();
-
 		frame.setVisible(true);
 		Server server = new Server();
+		Server.biginServer();
 
 	}
 

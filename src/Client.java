@@ -42,12 +42,9 @@ class Client extends GUI
 	        for(int i = 0 ; i < files.length-1 ; i++){
 	        	System.out.println(i+". "+files[i]);
 	        	serverFileList.addItem(files[i]);
-	        }
-
-			
+	        }	
 		}
 		
-
 		
 		if(cmd.contains("send")){
 			dout.writeUTF("SEND");
@@ -63,24 +60,7 @@ class Client extends GUI
 	        }
 	        
 	        dout.writeUTF(filename);
-	        String msgFromServer=din.readUTF();
 	        System.out.println("checked");
-	        if(msgFromServer.compareTo("File Already Exists")==0)
-	        {
-	            String Option;
-	            System.out.println("File Already Exists. Want to OverWrite (Y/N) ?");
-	            Option=br.readLine();            
-	            if(Option=="Y")    
-	            {
-	                dout.writeUTF("Y");
-	            }
-	            else
-	            {
-	                dout.writeUTF("N");
-	                return;
-	            }
-	        }
-	        
 	        System.out.println("Sending File ...");
 	        FileInputStream fin=new FileInputStream(f);
 	        int ch;
@@ -115,17 +95,6 @@ class Client extends GUI
 	        {
 	            System.out.println("Receiving File ...");
 	            File f=new File(fileName);
-	            if(f.exists())
-	            {
-	                String Option;
-	                System.out.println("File Already Exists. Want to OverWrite (Y/N) ?");
-	                Option=br.readLine();            
-	                if(Option=="N")    
-	                {
-	                    dout.flush();
-	                    return;    
-	                }                
-	            }
 	            FileOutputStream fout=new FileOutputStream(f);
 	            int ch;
 	            String temp;
@@ -173,7 +142,7 @@ class transferfileClient extends GUI
     {
     	Process proc = Runtime.getRuntime().exec("/bin/bash -c ls\n"); 
         BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream())) ; 
-        String line = "" ; String result = "" ; int count = 0 ; 
+        String line = "" ; int count = 0 ; 
         while ((line = reader.readLine()) != null){
         	System.out.println(count+". "+line);
         	count++;
