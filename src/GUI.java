@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -26,7 +27,9 @@ public class GUI {
 	public static JMenuBar fileList ;
 	private static JComboBox<String> serverFileList;
 	private static JButton download;
-	private static JButton send; 
+	private static JButton send;
+	private static Container myfileList;
+	private static JComboBox<String> myServerFileList; 
 
 	public static void main(String[] args) {
 		showGUI();
@@ -76,8 +79,17 @@ public class GUI {
 		pane.add(connectButton);
 		pane.add(Box.createHorizontalStrut(10));
 		
-		send = new JButton("1. Send File");
-		pane.add(send);
+		send = new JButton("1. Send File");		pane.add(send);
+		myfileList = new JMenuBar() ;
+		myfileList.setLayout(new GridLayout(1,4));
+		String[] myItems = {} ; 
+		myServerFileList = new JComboBox<>(myItems) ; 
+		
+		send = new JButton("Send") ; 
+		myfileList.add(myServerFileList) ; 
+		myfileList.add(send) ; 
+		pane.add(myfileList) ; 
+
 		pane.add(Box.createHorizontalStrut(10));
 		get = new JButton("2. GetFileList") ; 
 		pane.add(get) ; 
