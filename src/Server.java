@@ -1,16 +1,27 @@
 import java.net.*;
 import java.io.*;
 
-public class Server
+public class Server extends GUI
 {
-    public static void main(String args[]) throws Exception
+	private static ServerSocket soc;
+    public static void main(String args[])
     {
-        ServerSocket soc=new ServerSocket(5217);
+		try {
+			soc = new ServerSocket(5217);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         System.out.println("FTP Server Started on Port Number 5217");
         while(true)
         {
             System.out.println("Waiting for Connection ...");
-            transferfile t=new transferfile(soc.accept());
+            try {
+				transferfile t=new transferfile(soc.accept());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             
         }
     }
@@ -38,8 +49,8 @@ class transferfile extends Thread
         {
         }        
     }
-    void SendFile() throws Exception
-    {        
+    
+    void SendList() throws Exception{
     	Process proc = Runtime.getRuntime().exec("/bin/bash -c ls\n"); 
         BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream())) ; 
         String line = "" ; String result = "" ; int count = 0 ; 
@@ -54,6 +65,10 @@ class transferfile extends Thread
         String returnMessage = result ;
 
         dout.writeUTF(returnMessage);
+    	
+    }
+    void SendFile() throws Exception
+    {        
 
         String filename=din.readUTF();
         File f=new File(filename);
@@ -126,8 +141,7 @@ class transferfile extends Thread
 
     public void run()
     {
-        while(true)
-        {
+    	
             try
             {
             System.out.println("Waiting for Command ...");
@@ -136,13 +150,16 @@ class transferfile extends Thread
             {
                 System.out.println("\tGET Command Received ...");
                 SendFile();
-                continue;
+            }
+            if(Command.compareTo("LIST")==0)
+            {
+                System.out.println("\tLIST Command Received ...");
+                SendList();
             }
             else if(Command.compareTo("SEND")==0)
             {
                 System.out.println("\tSEND Command Receiced ...");                
                 ReceiveFile();
-                continue;
             }
             else if(Command.compareTo("DISCONNECT")==0)
             {
@@ -153,6 +170,5 @@ class transferfile extends Thread
             catch(Exception ex)
             {
             }
-        }
     }
 }

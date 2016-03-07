@@ -6,6 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -25,11 +28,14 @@ public class GUI {
 	public static JLabel headerLabel;
 	public static JButton get ;
 	public static JMenuBar fileList ;
-	private static JComboBox<String> serverFileList;
-	private static JButton download;
-	private static JButton send;
-	private static Container myfileList;
-	private static JComboBox<String> myServerFileList; 
+	public static JComboBox<String> serverFileList;
+	public static JButton download;
+	public static JButton send;
+	public static Container myfileList;
+	public static JComboBox<String> myServerFileList;
+	public static  JTextField ipAddress;
+	public static  JTextField port;
+	public static JButton sendFile; 
 
 	public static void main(String[] args) {
 		showGUI();
@@ -58,16 +64,22 @@ public class GUI {
 
 		JLabel ipAddressLabel = new JLabel("ipAddress: ");
 		JLabel portLabel = new JLabel("Port: ");
-		JTextField ipAddress = new JTextField(30);
-		JTextField port = new JTextField(4);
+		ipAddress = new JTextField(30);
+		port = new JTextField(4);
 
+		
 		JButton connectButton = new JButton("Connect");
 		connectButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-
+				Client client = new Client() ; 
+				try {
+					client.startClient("connect");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -79,29 +91,94 @@ public class GUI {
 		pane.add(connectButton);
 		pane.add(Box.createHorizontalStrut(10));
 		
-		send = new JButton("1. Send File");		pane.add(send);
+		
+		sendFile = new JButton("1. Send File");
+		pane.add(sendFile);
 		myfileList = new JMenuBar() ;
 		myfileList.setLayout(new GridLayout(1,4));
-		String[] myItems = {} ; 
-		myServerFileList = new JComboBox<>(myItems) ; 
-		
-		send = new JButton("Send") ; 
+		myServerFileList = new JComboBox<>() ;
+		sendFile.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+		    	Process proc;
+				try {
+					proc = Runtime.getRuntime().exec("/bin/bash -c ls\n");
+			        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream())) ; 
+			        String line = "" ; int count = 0 ; 
+			        while ((line = reader.readLine()) != null){
+			        	myServerFileList.addItem(line);
+			        	System.out.println(count+". "+line);
+			        	count++;
+			        }
+			        int i;
+			        for(i=0;i<count;i++){
+			        }
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} 
+
+			}		
+		});
+
+		send = new JButton("Send");
 		myfileList.add(myServerFileList) ; 
 		myfileList.add(send) ; 
-		pane.add(myfileList) ; 
-
+		pane.add(myfileList) ;
+		send.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Client client = new Client() ; 
+				try {
+					client.startClient("send");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		pane.add(Box.createHorizontalStrut(10));
+
+		
+		
+		
 		get = new JButton("2. GetFileList") ; 
 		pane.add(get) ; 
 		fileList = new JMenuBar() ;
 		fileList.setLayout(new GridLayout(1,4));
-		String[] items = {} ; 
-		serverFileList = new JComboBox<>(items) ; 
+		serverFileList = new JComboBox<>() ; 
+		get.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Client client = new Client() ; 
+				try {
+					client.startClient("list");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}		
+		});
 		
 		download = new JButton("Download") ; 
 		fileList.add(serverFileList) ; 
 		fileList.add(download) ; 
 		pane.add(fileList) ; 
+		download.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Client client = new Client() ; 
+				try {
+					client.startClient("get");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 
 
 	}
